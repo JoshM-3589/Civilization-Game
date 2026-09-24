@@ -113,7 +113,7 @@ void Tutorial(Player *p);
 void Item(Player *p); 
 void Skills();
 void Stats(); 
-int Selector(float *dmg, const int Esize, Enemy e1[], const char *type[]);
+int Selector(const int Esize, Enemy e1[], const char *type[]);
 void Attack(Player *p, int SelectedEnem, Enemy e1[], const char *type[]);
 item *makeItem(char *name, char *desc, int qty, Itemtype type);
 void viewInventory(inventory *i1);
@@ -179,7 +179,7 @@ void TypeText(char *text, int delay){
     }
     
 }
-int Selector(float *dmg, const int Esize, Enemy e1[], const char *type[]){
+int Selector(const int Esize, Enemy e1[], const char *type[]){
     int i, enemyattk;
     bool choice = false;
     do {
@@ -375,7 +375,7 @@ void MainGame(Player *p){
 
         switch(Pchoice){
             case 0:
-            selectedEnem = Selector(&damage, Enemsize, e1, EnType); 
+            selectedEnem = Selector(Enemsize, e1, EnType); 
             Attack(p, selectedEnem, e1, EnType); 
 
             break;
