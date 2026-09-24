@@ -331,32 +331,11 @@ void MainGame(Player *p){
             printf("HP: %d\n\n", e1[i].hp);
         }
 
-        for(i = 0; i < sizeCol; i++){
-            for (j = 0; j < sizeRow; j++){
-                if(i == 0 || i == sizeCol - 1){
-                    printf("=");
-                }else if (j == 0 || j == sizeRow - 1){
-                    printf("|");
-                }else{
-                    printf(" ");
-                }
-            }
-            printf("\n");
-        }
+       printf("==================================================\n");
+       printf("| [0] ATTACK                  [1] SKILLS         |\n");
+       printf("| [2] ITEMS                   [3] STATS          |\n");
+       printf("==================================================\n");
 
-        printf("\033[13;2H");
-        printf("[0] ATTACK");
-
-        printf("\033[13;40H");
-        printf("[1] SKILLS"); 
-
-        printf("\033[16;2H");
-        printf("[2] ITEMS");
-
-        printf("\033[16;40H");
-        printf("[3] STATS");
-        
-        printf("\033[20;2H");
 
         int Pchoice;
         int result;
