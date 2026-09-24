@@ -120,9 +120,21 @@ void viewInventory(inventory *i1);
 inventory *makeInventory(item *i, int Count, int Capacity, int page);
 inventory *addItem(inventory *inv, item *newItem);
 void clearScreen();
+int interactiveMenu(int imchoice);
+
+
+int interactiveMenu(int imchoice){
+    printf("==================================================\n");
+    printf("| [1] ATTACK                  [2] SKILLS         |\n");
+    printf("| [3] ITEMS                   [3] STATS          |\n");
+    printf("==================================================\n");
+    TypeText("Your Turn: ", 5000);
+    scanf("%d", &imchoice);
+    return &imchoice;
+}
 
 void clearScreen(){
-    printf("\033[2J\033[H");
+    system("cls");
 
 }
 
@@ -215,8 +227,7 @@ void Stats(){
 }
 //If player choose "3" Exit//
 void ExitGame(){
-    printf("\033[2J");
-    printf("\033[H");
+    clearScreen();
 
     TypeText("Exiting", 5000);
     int i = 0;
@@ -331,20 +342,16 @@ void MainGame(Player *p){
             printf("HP: %d\n\n", e1[i].hp);
         }
 
-       printf("==================================================\n");
-       printf("| [0] ATTACK                  [1] SKILLS         |\n");
-       printf("| [2] ITEMS                   [3] STATS          |\n");
-       printf("==================================================\n");
-
-
         int Pchoice;
         int result;
         float ItemBoost; 
         float damage; 
         int selectedEnem; 
+
+        
     
         do{
-            result = scanf("%d", &Pchoice);
+            result = scanf("%d", interactiveMenu(Pchoice));
             if(result != 1){
                 TypeText("Invalid Choice only Numbers 0 - 3\n", DTalk);
                 while(getchar() != '\n');
@@ -419,8 +426,7 @@ void Intro(){
 
     //First Line//
 
-    printf("\033[2J");
-    printf("\033[H");
+    clearScreen();
 
     printf("Unknown Character:\n");
     TypeText("OOGA BOOGA!", 50000); 
@@ -428,8 +434,7 @@ void Intro(){
     fflush(stdout);
     usleep(500000);
 
-    printf("\033[2J");
-    printf("\033[H");
+    clearScreen();
 
     //Second Line//
 
@@ -439,8 +444,7 @@ void Intro(){
     fflush(stdout);
     usleep(500000);
 
-    printf("\033[2J");
-    printf("\033[H");
+    clearScreen();
 
     //Third Line//
 
@@ -450,8 +454,7 @@ void Intro(){
     fflush(stdout);
     usleep(500000);
 
-    printf("\033[2J");
-    printf("\033[H");
+    clearScreen();
 
     //4th Line//
 
@@ -473,8 +476,7 @@ void Intro(){
     usleep(1000000);
 
 
-    printf("\033[2J");
-    printf("\033[H");
+    clearScreen();
 
     TypeText("Skip Tutorial? Yes[1] No[0]", DTalk);
 
