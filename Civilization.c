@@ -119,6 +119,12 @@ item *makeItem(char *name, char *desc, int qty, Itemtype type);
 void viewInventory(inventory *i1);
 inventory *makeInventory(item *i, int Count, int Capacity, int page);
 inventory *addItem(inventory *inv, item *newItem);
+void clearScreen();
+
+void clearScreen(){
+    printf("\033[2J\033[H");
+
+}
 
 
 inventory *makeInventory(item *i, int Count, int Capacity, int page){
@@ -338,19 +344,19 @@ void MainGame(Player *p){
             printf("\n");
         }
 
-        printf("\033[16;2H");
+        printf("\033[13;2H");
         printf("[0] ATTACK");
 
-        printf("\033[16;40H");
+        printf("\033[13;40H");
         printf("[1] SKILLS"); 
 
-        printf("\033[17;2H");
+        printf("\033[16;2H");
         printf("[2] ITEMS");
 
-        printf("\033[17;40H");
+        printf("\033[16;40H");
         printf("[3] STATS");
         
-        printf("\033[19;2H");
+        printf("\033[20;2H");
 
         int Pchoice;
         int result;
@@ -498,10 +504,12 @@ void Intro(){
     scanf("%d", &choice);
     if(choice == 1){
         isSkip = true;
+        clearScreen();
         MainGame(&p1);
 
     }else if(choice == 0){
         isSkip = false;
+        clearScreen();
         TypeText("Let's Start!", DTalk);
         Tutorial(&p1);
 
@@ -518,8 +526,8 @@ void Intro(){
 
 int main(void)
 {
-    printf("\033[2J"); 
-    printf("\033[H"); 
+    clearScreen();
+
     int choice; 
     TypeText("Loading", 50000);
     int i = 0;
