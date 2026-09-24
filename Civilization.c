@@ -121,7 +121,28 @@ inventory *makeInventory(item *i, int Count, int Capacity, int page);
 inventory *addItem(inventory *inv, item *newItem);
 void clearScreen();
 int interactiveMenu(int *imchoice);
+void displayEnemy(const int Esize, Enemy e1[], const char *type[]);
 
+void displayEnemy(const int Esize, Enemy e1[], const char *type[]){
+    for (int i = 0; i < Esize; i++){
+            if(i > 0 && i % 2 == 0){
+                printf("\n");
+            }
+            if(i % 2 == 1){
+                printf("\t\t");
+                
+            }
+            printf("[%d]Enemy %d %s", i + 1, i + 1, type[e1[i].Type]);
+            printf("\n");
+            if(i % 2 == 1){
+                printf("\t");
+                
+            }
+            printf(" HP: %d", e1[i].hp);
+
+        }
+    printf("\n");
+}
 
 int interactiveMenu(int *imchoice){
     printf("==================================================\n");
@@ -178,6 +199,7 @@ void viewInventory(inventory *i1){
     for(item *trav = i1->head; trav != NULL; trav = trav->next){
         printf("  %s (x%d) - %s\n", trav->itemName, trav->Qty, trav->Desc);
     }
+    return;
 }
 
 void Attack(Player *p, int SelectedEnem, Enemy e1[], const char *type[]){
@@ -336,10 +358,7 @@ void MainGame(Player *p){
         };
 
 
-        for (i = 0; i < Enemsize; i++){
-            printf("[%d]Enemy %d %s:\n", i + 1, i + 1, EnType[e1[i].Type]);
-            printf("HP: %d\n\n", e1[i].hp);
-        }
+        displayEnemy(Enemsize, e1, EnType);
 
         int Pchoice;
         float ItemBoost; 
@@ -365,21 +384,24 @@ void MainGame(Player *p){
         }while(Pchoice < 0 || Pchoice > 3);
 
         switch(Pchoice){
-            case 0:
+            case 1:
             selectedEnem = Selector(Enemsize, e1, EnType); 
             Attack(p, selectedEnem, e1, EnType); 
 
             break;
-            case 1:
-
-            break;
-
             case 2:
 
 
             break;
 
             case 3:
+
+            viewInventory(p1);
+
+
+            break;
+
+            case 4:
 
             break;
 
