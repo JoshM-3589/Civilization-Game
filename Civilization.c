@@ -120,17 +120,16 @@ void viewInventory(inventory *i1);
 inventory *makeInventory(item *i, int Count, int Capacity, int page);
 inventory *addItem(inventory *inv, item *newItem);
 void clearScreen();
-int interactiveMenu(int imchoice);
+int interactiveMenu(int *imchoice);
 
 
-int interactiveMenu(int imchoice){
+int interactiveMenu(int *imchoice){
     printf("==================================================\n");
     printf("| [1] ATTACK                  [2] SKILLS         |\n");
     printf("| [3] ITEMS                   [3] STATS          |\n");
     printf("==================================================\n");
     TypeText("Your Turn: ", 5000);
-    scanf("%d", &imchoice);
-    return &imchoice;
+    return scanf("%d", imchoice);
 }
 
 void clearScreen(){
@@ -343,7 +342,6 @@ void MainGame(Player *p){
         }
 
         int Pchoice;
-        int result;
         float ItemBoost; 
         float damage; 
         int selectedEnem; 
@@ -351,7 +349,8 @@ void MainGame(Player *p){
         
     
         do{
-            result = scanf("%d", interactiveMenu(Pchoice));
+
+            int result = interactiveMenu(&Pchoice);
             if(result != 1){
                 TypeText("Invalid Choice only Numbers 0 - 3\n", DTalk);
                 while(getchar() != '\n');
