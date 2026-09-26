@@ -7,6 +7,7 @@
 #include <string.h>
 #define INVCAP 10
 #define DTalk 50000
+#define EnSize 4
 
 typedef enum{
     PUNCH,
@@ -82,6 +83,13 @@ typedef struct{
     Level Enemylvl;
     
 }Enemy; 
+typedef struct{
+    int EnemyCount;
+    Enemy En[EnSize]; 
+    Era EnlvlEra;
+    int waveCount;
+
+}EnemyStack;
 
 typedef struct {
    double Gold; 
@@ -116,32 +124,22 @@ void Stats();
 int Selector(const int Esize, Enemy e1[], const char *type[]);
 void Attack(Player *p, int SelectedEnem, Enemy e1[], const char *type[]);
 item *makeItem(char *name, char *desc, int qty, Itemtype type);
-void viewInventory(inventory *i1);
+int viewInventory(inventory *i1);
 inventory *makeInventory(item *i, int Count, int Capacity, int page);
 inventory *addItem(inventory *inv, item *newItem);
 void clearScreen();
 int interactiveMenu(int *imchoice);
 void displayEnemy(const int Esize, Enemy e1[], const char *type[]);
+EnemyStack makeEnemy()
 
 void displayEnemy(const int Esize, Enemy e1[], const char *type[]){
-    for (int i = 0; i < Esize; i++){
-            if(i > 0 && i % 2 == 0){
-                printf("\n");
-            }
-            if(i % 2 == 1){
-                printf("\t\t");
-                
-            }
-            printf("[%d]Enemy %d %s", i + 1, i + 1, type[e1[i].Type]);
-            printf("\n");
-            if(i % 2 == 1){
-                printf("\t");
-                
-            }
-            printf(" HP: %d", e1[i].hp);
-
-        }
-    printf("\n");
+    int i = 0;
+    printf("==================================================\n");
+    printf("| [%d] Enemy %d %s          [%d] Enemy %d %s   |\n", i + 1, i + 1, type[e1[i].Type], i + 2, i + 2, type[e1[i + 1].Type]);
+    printf("|  HP: %d                      HP:%d             |\n", e1[i].hp, e1[i+1].hp);
+    printf("| [%d] Enemy %d %s          [%d] Enemy %d %s    |\n", i + 3, i + 3, type[e1[i + 2].Type], i + 4, i + 4, type[e1[i + 3].Type]);
+    printf("|  HP: %d                      HP:%d             |\n", e1[i].hp, e1[i+1].hp);
+    printf("==================================================\n");
 }
 
 int interactiveMenu(int *imchoice){
@@ -188,17 +186,22 @@ inventory *addItem(inventory *inv, item *newItem){
         inv->next = newPage;
         inv = newPage;
     }
+    //Insertion (Alphabetically)
+    item *curr = NULL;
+    for(curr = inv->head; curr != NULL && strcmp(newItem->itemName, inv->head->itemName) < 0; curr = curr->next);
     newItem->next = inv->head;
     inv->head = newItem; 
     inv->invCount++;
     return inv;
 }
-void viewInventory(inventory *i1){
+int viewInventory(inventory *i1){
     if(i1 == NULL)return; 
     printf("Inventory Page: %d [%d/%d]\n", i1->page, i1->invCount, i1->capacity);
     for(item *trav = i1->head; trav != NULL; trav = trav->next){
         printf("  %s (x%d) - %s\n", trav->itemName, trav->Qty, trav->Desc);
     }
+    TypeText("Choose an Item:", DTalk);
+    
     return;
 }
 
@@ -340,13 +343,13 @@ void MainGame(Player *p){
 
 
     //while(p->hp > 0){//
-        const int Enemsize = 4;
+        EnemyStack e1;
+        e1.En[EnSize];
         EnemyType Etype;
-        Enemy e1[Enemsize];
-        e1[0] = (Enemy){3, 50, MELEE, p->level};
-        e1[1] = (Enemy){5, 35, RANGE, p->level};
-        e1[2] = (Enemy){2, 70, TANK, p->level};
-        e1[3] = (Enemy){6, 20, WITCH, p->level};
+        e1.En[0] = (Enemy){3, 50, MELEE, p->level};
+        e1.En[1] = (Enemy){5, 35, RANGE, p->level};
+        e1.En[2] = (Enemy){2, 70, TANK, p->level};
+        e1.En[3] = (Enemy){6, 20, WITCH, p->level};
         
         
         const char *EnType[] = {
@@ -364,6 +367,7 @@ void MainGame(Player *p){
         float ItemBoost; 
         float damage; 
         int selectedEnem; 
+
 
         
     
@@ -545,8 +549,7 @@ int main(void)
     
 
     
-    printf("\033[2J");
-    printf("\033[H");
+   clearScreen();
 
 
     printf("\n");
