@@ -130,7 +130,21 @@ inventory *addItem(inventory *inv, item *newItem);
 void clearScreen();
 int interactiveMenu(int *imchoice);
 void displayEnemy(const int Esize, Enemy e1[], const char *type[]);
-EnemyStack makeEnemy()
+EnemyStack makeEnemy(Enemy e1, Player *p);
+
+EnemyStack makeEnemy(Enemy e1, Player *p){
+        EnemyStack e1;
+        EnemyType Etype;
+        e1.En[0] = (Enemy){3, 50, MELEE, p->level};
+        e1.En[1] = (Enemy){5, 35, RANGE, p->level};
+        e1.En[2] = (Enemy){2, 70, TANK, p->level};
+        e1.En[3] = (Enemy){6, 20, WITCH, p->level};
+        e1.EnemyCount = EnSize;
+        e1.EnlvlEra = p->lvlEra;
+        e1.waveCount = 0;
+        return e1;
+
+}
 
 void displayEnemy(const int Esize, Enemy e1[], const char *type[]){
     int i = 0;
@@ -343,13 +357,7 @@ void MainGame(Player *p){
 
 
     //while(p->hp > 0){//
-        EnemyStack e1;
-        e1.En[EnSize];
-        EnemyType Etype;
-        e1.En[0] = (Enemy){3, 50, MELEE, p->level};
-        e1.En[1] = (Enemy){5, 35, RANGE, p->level};
-        e1.En[2] = (Enemy){2, 70, TANK, p->level};
-        e1.En[3] = (Enemy){6, 20, WITCH, p->level};
+
         
         
         const char *EnType[] = {
