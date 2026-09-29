@@ -120,11 +120,15 @@ A CLI Game RPG Like Civilization Game
 
 
 
-**bold**  *italic*  `inline code`
+## HOW TO SETUP 
 
-- bullet item
-- another item
+1. clone git https://github.com/JoshM-3589/Civilization-Game 
+2. if accessing in dcism server file use git config --global --add safe.directory '%(prefix)///data.dcism.org/s25103589/Civilization Game' 
+3. Use git remote -v 
+4. Either use git pull origin main or git pull origin master
+5. Check for commits with git log --oneline 
 
-1. numbered
-2. list
+## HOW TO RUN 
 
+1. gcc Civilization.c -o Civilization.exe
+2. .\Civilization.exe

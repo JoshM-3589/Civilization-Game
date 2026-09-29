@@ -38,6 +38,7 @@ typedef enum{
 }Itemtype;
 
 typedef struct item{
+    int itemNumber; 
     char itemName[50];
     char Desc[100];
     int Qty; 
@@ -132,6 +133,7 @@ int interactiveMenu(int *imchoice);
 void displayEnemy(EnemyStack e1, const char *type[]);
 EnemyStack makeEnemy(Player *p);
 
+
 EnemyStack makeEnemy(Player *p){
         EnemyStack e;
         e.En[0] = (Enemy){3, 50, MELEE, p->level};
@@ -148,10 +150,10 @@ EnemyStack makeEnemy(Player *p){
 void displayEnemy(EnemyStack e1, const char *type[]){
     int i = 0;
     printf("==================================================\n");
-    printf("| [%d] Enemy %d %s          [%d] Enemy %d %s   |\n", i + 1, i + 1, type[e1.En[i].Type], i + 2, i + 2, type[e1.En[i].Type]);
+    printf("| [%d] Enemy %d %s          [%d] Enemy %d %s   |\n", i + 1, i + 1, type[e1.En[i].Type], i + 2, i + 2, type[e1.En[i + 1].Type]);
     printf("|  HP: %d                      HP:%d             |\n", e1.En[i].hp, e1.En[i+1].hp);
-    printf("| [%d] Enemy %d %s          [%d] Enemy %d %s    |\n", i + 3, i + 3, type[e1.En[i].Type], i + 4, i + 4, type[e1.En[i].Type]);
-    printf("|  HP: %d                      HP:%d             |\n", e1.En[i].hp, e1.En[i+1].hp);
+    printf("| [%d] Enemy %d %s          [%d] Enemy %d %s    |\n", i + 3, i + 3, type[e1.En[i + 2].Type], i + 4, i + 4, type[e1.En[i + 3].Type]);
+    printf("|  HP: %d                      HP:%d             |\n", e1.En[i + 2].hp, e1.En[i + 3].hp);
     printf("==================================================\n");
 }
 
@@ -173,11 +175,12 @@ void clearScreen(){
 inventory *makeInventory(item *i, int Count, int Capacity, int page){
     inventory *inv = malloc(sizeof(inventory)); 
     if(inv == NULL)return NULL;
-    
+
     inv->head = i;
     inv->invCount = Count;
     inv->capacity = Capacity; 
     inv->page = page;
+    inv->next = NULL;
     return inv;
 }
 item *makeItem(char *name, char *desc, int qty, Itemtype type){
@@ -201,20 +204,42 @@ inventory *addItem(inventory *inv, item *newItem){
     }
     //Insertion (Alphabetically)
     item *curr = NULL;
-    for(curr = inv->head; curr != NULL && strcmp(newItem->itemName, inv->head->itemName) < 0; curr = curr->next);
-    newItem->next = inv->head;
-    inv->head = newItem; 
+    item *prev = NULL;
+    for(curr = inv->head; 
+        curr != NULL && strcmp(newItem->itemName, curr->itemName) > 0;
+         prev = curr, curr = curr->next);
+
+    if(prev == NULL){
+        newItem->next = curr;
+        inv->head = newItem;
+
+    }else{
+        newItem->next = curr;
+        prev->next = newItem;
+    }
     inv->invCount++;
+
+    int count = 1;
+    for(item *trav = inv->head; trav != NULL; trav = trav->next, count++){
+        trav->itemNumber = count;
+    }
+
     return inv;
 }
 void viewInventory(int *choice, inventory *i1){
-
+    clearScreen();
     if(i1 == NULL)return; 
     printf("Inventory Page: %d [%d/%d]\n", i1->page, i1->invCount, i1->capacity);
+    printf("==========================================\n");
     for(item *trav = i1->head; trav != NULL; trav = trav->next){
-        printf("  %s (x%d) - %s\n", trav->itemName, trav->Qty, trav->Desc);
+        printf("| [%d] %s (x%d) - %s |\n",trav->itemNumber, trav->itemName, trav->Qty, trav->Desc);
+        if(trav->next != NULL){
+            printf("--------------------------------------\n");
+        }
+        
     }
-    TypeText("Choose an Item:", DTalk);
+    printf("=========================================\n");
+    TypeText("Choose an Item: ", DTalk);
     scanf("%d", choice);
     
     return;
@@ -358,7 +383,7 @@ void MainGame(Player *p){
 
 
     //while(p->hp > 0){//
-    EnemyStack e1 = makeEnemy(p);
+    
 
         
         
@@ -369,6 +394,7 @@ void MainGame(Player *p){
             "WITCH",
 
         };
+        EnemyStack e1 = makeEnemy(p);
 
 
 
@@ -400,6 +426,7 @@ void MainGame(Player *p){
 
         switch(Pchoice){
             case 1:
+            
             selectedEnem = Selector(e1, EnType); 
             Attack(p, selectedEnem, e1, EnType); 
 
@@ -411,8 +438,9 @@ void MainGame(Player *p){
 
             case 3:
             int Ichoice; 
-
+            
             viewInventory(&Ichoice ,p1);
+            
 
 
             break;
