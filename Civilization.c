@@ -121,38 +121,37 @@ void Tutorial(Player *p);
 void Item(Player *p); 
 void Skills();
 void Stats(); 
-int Selector(const int Esize, Enemy e1[], const char *type[]);
-void Attack(Player *p, int SelectedEnem, Enemy e1[], const char *type[]);
+int Selector(EnemyStack e1, const char *type[]);
+void Attack(Player *p, int SelectedEnem, EnemyStack e1, const char *type[]);
 item *makeItem(char *name, char *desc, int qty, Itemtype type);
-int viewInventory(inventory *i1);
+void viewInventory(int *choice, inventory *i1);
 inventory *makeInventory(item *i, int Count, int Capacity, int page);
 inventory *addItem(inventory *inv, item *newItem);
 void clearScreen();
 int interactiveMenu(int *imchoice);
-void displayEnemy(const int Esize, Enemy e1[], const char *type[]);
-EnemyStack makeEnemy(Enemy e1, Player *p);
+void displayEnemy(EnemyStack e1, const char *type[]);
+EnemyStack makeEnemy(Player *p);
 
-EnemyStack makeEnemy(Enemy e1, Player *p){
-        EnemyStack e1;
-        EnemyType Etype;
-        e1.En[0] = (Enemy){3, 50, MELEE, p->level};
-        e1.En[1] = (Enemy){5, 35, RANGE, p->level};
-        e1.En[2] = (Enemy){2, 70, TANK, p->level};
-        e1.En[3] = (Enemy){6, 20, WITCH, p->level};
-        e1.EnemyCount = EnSize;
-        e1.EnlvlEra = p->lvlEra;
-        e1.waveCount = 0;
-        return e1;
+EnemyStack makeEnemy(Player *p){
+        EnemyStack e;
+        e.En[0] = (Enemy){3, 50, MELEE, p->level};
+        e.En[1] = (Enemy){5, 35, RANGE, p->level};
+        e.En[2] = (Enemy){2, 70, TANK, p->level};
+        e.En[3] = (Enemy){6, 20, WITCH, p->level};
+        e.EnemyCount = EnSize;
+        e.EnlvlEra = p->lvlEra;
+        e.waveCount = 1;
+        return e;
 
 }
 
-void displayEnemy(const int Esize, Enemy e1[], const char *type[]){
+void displayEnemy(EnemyStack e1, const char *type[]){
     int i = 0;
     printf("==================================================\n");
-    printf("| [%d] Enemy %d %s          [%d] Enemy %d %s   |\n", i + 1, i + 1, type[e1[i].Type], i + 2, i + 2, type[e1[i + 1].Type]);
-    printf("|  HP: %d                      HP:%d             |\n", e1[i].hp, e1[i+1].hp);
-    printf("| [%d] Enemy %d %s          [%d] Enemy %d %s    |\n", i + 3, i + 3, type[e1[i + 2].Type], i + 4, i + 4, type[e1[i + 3].Type]);
-    printf("|  HP: %d                      HP:%d             |\n", e1[i].hp, e1[i+1].hp);
+    printf("| [%d] Enemy %d %s          [%d] Enemy %d %s   |\n", i + 1, i + 1, type[e1.En[i].Type], i + 2, i + 2, type[e1.En[i].Type]);
+    printf("|  HP: %d                      HP:%d             |\n", e1.En[i].hp, e1.En[i+1].hp);
+    printf("| [%d] Enemy %d %s          [%d] Enemy %d %s    |\n", i + 3, i + 3, type[e1.En[i].Type], i + 4, i + 4, type[e1.En[i].Type]);
+    printf("|  HP: %d                      HP:%d             |\n", e1.En[i].hp, e1.En[i+1].hp);
     printf("==================================================\n");
 }
 
@@ -208,20 +207,22 @@ inventory *addItem(inventory *inv, item *newItem){
     inv->invCount++;
     return inv;
 }
-int viewInventory(inventory *i1){
+void viewInventory(int *choice, inventory *i1){
+
     if(i1 == NULL)return; 
     printf("Inventory Page: %d [%d/%d]\n", i1->page, i1->invCount, i1->capacity);
     for(item *trav = i1->head; trav != NULL; trav = trav->next){
         printf("  %s (x%d) - %s\n", trav->itemName, trav->Qty, trav->Desc);
     }
     TypeText("Choose an Item:", DTalk);
+    scanf("%d", choice);
     
     return;
 }
 
-void Attack(Player *p, int SelectedEnem, Enemy e1[], const char *type[]){
+void Attack(Player *p, int SelectedEnem, EnemyStack e1, const char *type[]){
     TypeText("Attacking Enemy: \n", 50000); 
-    printf("[%d]Enemy %d %s:\n", SelectedEnem, SelectedEnem, type[e1[SelectedEnem].Type]);
+    printf("[%d]Enemy %d %s:\n", SelectedEnem, SelectedEnem, type[e1.En[SelectedEnem].Type]);
 
 }
 
@@ -235,16 +236,16 @@ void TypeText(char *text, int delay){
     }
     
 }
-int Selector(const int Esize, Enemy e1[], const char *type[]){
+int Selector(EnemyStack e1, const char *type[]){
     int i, enemyattk;
     bool choice = false;
     do {
         TypeText("Select an enemy to attack: \n", 50000); 
     
 
-        for (i = 0; i < Esize; i++){
-            printf("[%d]Enemy %d %s:\n", i + 1, i + 1, type[e1[i].Type]);
-            printf("HP: %d\n", e1[i].hp);
+        for (i = 0; i < EnSize; i++){
+            printf("[%d]Enemy %d %s:\n", i + 1, i + 1, type[e1.En[i].Type]);
+            printf("HP: %d\n", e1.En[i].hp);
         }
         scanf("%d", &enemyattk); 
     choice = true;
@@ -357,6 +358,7 @@ void MainGame(Player *p){
 
 
     //while(p->hp > 0){//
+    EnemyStack e1 = makeEnemy(p);
 
         
         
@@ -369,7 +371,8 @@ void MainGame(Player *p){
         };
 
 
-        displayEnemy(Enemsize, e1, EnType);
+
+        displayEnemy(e1, EnType);
 
         int Pchoice;
         float ItemBoost; 
@@ -397,7 +400,7 @@ void MainGame(Player *p){
 
         switch(Pchoice){
             case 1:
-            selectedEnem = Selector(Enemsize, e1, EnType); 
+            selectedEnem = Selector(e1, EnType); 
             Attack(p, selectedEnem, e1, EnType); 
 
             break;
@@ -407,8 +410,9 @@ void MainGame(Player *p){
             break;
 
             case 3:
+            int Ichoice; 
 
-            viewInventory(p1);
+            viewInventory(&Ichoice ,p1);
 
 
             break;
