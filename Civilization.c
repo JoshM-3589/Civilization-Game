@@ -30,6 +30,27 @@ typedef enum{
     TOSS,
 }AttackType2; //Spears & Swords
 
+typedef struct{
+    
+}Fist;
+
+typedef enum{
+    FIST,
+    ROCK,
+    SWORD,
+    SPEAR,
+}WeaponType;
+
+typedef struct{
+    char name[50];
+    char desc[100];
+    WeaponType wtype;
+    int dmg;
+
+
+
+}Weapon;
+
 typedef enum{
     HEAL, 
     DAMAGE_BOOST,
@@ -73,7 +94,8 @@ typedef enum{
 
 typedef struct {
     int lvl;
-    char era[20];
+    Era lvlera;
+    char era[50];
     
 }Level;
 
@@ -107,7 +129,9 @@ typedef struct {
     char Name[50]; 
     Level level;
     Currency Current; 
-    Era lvlEra;
+    AttackType0 defattk;
+    Weapon pweapon;
+
     
 
 }Player;
@@ -132,6 +156,65 @@ void clearScreen();
 int interactiveMenu(int *imchoice);
 void displayEnemy(EnemyStack e1, const char *type[]);
 EnemyStack makeEnemy(Player *p);
+void PlayerStat(Player *p);
+Player makePlayer(int defhp, int defdmg, char *defname, Level deflvl, Currency defCurr, AttackType0 attkdef);
+
+Player makePlayer(int defhp, int defdmg, char *name, Level deflvl, Currency defCurr, AttackType0 attkdef){
+   Player *p = malloc(sizeof(Player));
+   if(p == NULL)return NULL; 
+   p->hp = defhp;
+   p->dmg = defdmg;
+   snprintf(p->Name, sizeof(p->Name), "%s", name);
+   p->level = deflvl;
+   p->Current = defCurr;
+   p->defattk = attkdef;
+
+   return p;
+
+
+
+
+}
+void PlayerStat(Player *p){
+    if(p->level.lvl <= 10){
+        strcpy(p->level.era, "STONE");
+        
+    }else if(p -> level.lvl <= 15 && p->level.lvl > 10){
+        strcpy(p->level.era, "BRONZE");
+    }
+    printf("\033[2J");
+    printf("\033[H");
+    int sizeCol = 4;
+    int sizeRow = 50;
+    int i, j;
+    for(i = 0; i < sizeCol; i++){
+        for (j = 0; j < sizeRow; j++){
+            if(i == 0 || i == sizeCol - 1){
+                printf("=");
+            }else if (j == 0 || j == sizeRow - 1){
+                printf("|");
+            }else{
+                printf(" ");
+            }
+        }
+        printf("\n");
+    }
+    printf("\033[2;2H");
+    printf("Health: %d", p->hp);
+
+    printf("\033[3;2H");
+    printf("Gold: %.2f", p->Current.Gold);
+
+    printf("\033[2;40H");
+    printf("Level: %d", p->level.lvl);
+
+    printf("\033[4;2H");
+
+    printf("\033[3;40H");
+    printf("Era: %s", p->level.era);
+
+    printf("\033[5;2H");
+}
 
 
 EnemyStack makeEnemy(Player *p){
@@ -268,10 +351,8 @@ int Selector(EnemyStack e1, const char *type[]){
         TypeText("Select an enemy to attack: \n", 50000); 
     
 
-        for (i = 0; i < EnSize; i++){
-            printf("[%d]Enemy %d %s:\n", i + 1, i + 1, type[e1.En[i].Type]);
-            printf("HP: %d\n", e1.En[i].hp);
-        }
+        displayEnemy(e1, type);
+
         scanf("%d", &enemyattk); 
     choice = true;
     }while(choice == false);
@@ -335,48 +416,12 @@ void MainGame(Player *p){
 
     
 
-    if(p->level.lvl <= 10){
-        strcpy(p->level.era, "STONE");
-        
-    }else if(p -> level.lvl <= 15 && p->level.lvl > 10){
-        strcpy(p->level.era, "BRONZE");
-    }
-    printf("\033[2J");
-    printf("\033[H");
-    int sizeCol = 4;
-    int sizeRow = 50;
-    int i, j;
-    for(i = 0; i < sizeCol; i++){
-        for (j = 0; j < sizeRow; j++){
-            if(i == 0 || i == sizeCol - 1){
-                printf("=");
-            }else if (j == 0 || j == sizeRow - 1){
-                printf("|");
-            }else{
-                printf(" ");
-            }
-        }
-        printf("\n");
-    }
-    printf("\033[2;2H");
-    printf("Health: %d", p->hp);
-
-    printf("\033[3;2H");
-    printf("Gold: %.2f", p->Current.Gold);
-
-    printf("\033[2;40H");
-    printf("Level: %d", p->level.lvl);
-
-    printf("\033[4;2H");
-
-    printf("\033[3;40H");
-    printf("Era: %s", p->level.era);
-
-    printf("\033[5;2H");
-
+    
+    printf("Unknown Character:\n");
     TypeText("Watch Out!\n", DTalk);
-
     usleep(1000000);
+
+    clearScreen();
 
 
 
@@ -399,6 +444,8 @@ void MainGame(Player *p){
 
 
         displayEnemy(e1, EnType);
+
+        PlayerStat(p);
 
         int Pchoice;
         float ItemBoost; 
@@ -426,7 +473,7 @@ void MainGame(Player *p){
 
         switch(Pchoice){
             case 1:
-            
+            clearScreen();
             selectedEnem = Selector(e1, EnType); 
             Attack(p, selectedEnem, e1, EnType); 
 
@@ -472,6 +519,7 @@ void MainGame(Player *p){
 void Intro(){
     
     bool isSkip = false;
+
     
     Player p1 = {
 
@@ -487,6 +535,8 @@ void Intro(){
 
     STONE
     };
+
+    makePlayer(100, 30, "N/A", (Level){1, STONE, "STONE"}, (Currency){100.0, 0.0f}, )
     //Intro Dialogue//
 
     //First Line//
